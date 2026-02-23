@@ -1,0 +1,6 @@
+Nombre,CodigoBarras,PrecioVenta,Costo,Categoria,Stock
+"Bebida Coca-Cola 3L",780123412345,3000,2200,Bebidas,50
+"Cereal Chocapic 500g",780987654321,2500,1800,Desayuno,30
+"Galletas McKay Vino",780444455556,800,500,Snacks,100
+"Arroz Miraflores G2 1kg",780111122223,1650,1100,Abarrotes,45
+"Aceite Natura 1L Maravilla",780333344445,2400,1750,Abarrotes,60
