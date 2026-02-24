@@ -16,13 +16,11 @@ exports.getProductos = async (req, res) => {
                 p.Nombre as nombre,
                 p.PrecioVenta as precioVenta,
                 p.PrecioNeto as precioNeto,
-                p.PrecioCosto as costo,
-                COALESCE(s.Cantidad, 0) as stockActual,
-                c.NombreCategoria as categoria
+                p.Costo as costo,
+                COALESCE(s.Cantidad, 0) as stockActual
             FROM Productos p
             LEFT JOIN Stock s ON p.IdProducto = s.IdProducto
-            LEFT JOIN Categorias c ON p.IdCategoria = c.IdCategoria
-            WHERE p.IdEmpresa = ? AND p.Activo = 1
+            WHERE p.IdEmpresa = ?
         `, [idEmpresa]);
 
         res.json(productos);
@@ -62,8 +60,8 @@ exports.createProducto = async (req, res) => {
 
         // 2. Insertar Producto
         const [resultProd] = await pool.query(
-            'INSERT INTO Productos (IdEmpresa, SKU, CodigoBarras, Nombre, PrecioVenta, PrecioNeto, PrecioCosto, IdCategoria) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-            [idEmpresa, sku || null, codigoBarras || null, nombre, precioVenta, precioNeto || null, precioCosto || 0, idCategoria]
+            'INSERT INTO Productos (IdEmpresa, SKU, CodigoBarras, Nombre, PrecioVenta, PrecioNeto, Costo) VALUES (?, ?, ?, ?, ?, ?, ?)',
+            [idEmpresa, sku || null, codigoBarras || null, nombre, precioVenta, precioNeto || null, precioCosto || 0]
         );
 
         const idNuevoProducto = resultProd.insertId;
@@ -115,7 +113,7 @@ exports.updateProducto = async (req, res) => {
         }
 
         await pool.query(
-            'UPDATE Productos SET SKU = ?, Nombre = ?, CodigoBarras = ?, PrecioVenta = ?, PrecioNeto = ?, PrecioCosto = ? WHERE IdProducto = ?',
+            'UPDATE Productos SET SKU = ?, Nombre = ?, CodigoBarras = ?, PrecioVenta = ?, PrecioNeto = ?, Costo = ? WHERE IdProducto = ?',
             [sku, nombre, codigoBarras, precioVenta, precioNeto, precioCosto, id]
         );
 

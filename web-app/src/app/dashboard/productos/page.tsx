@@ -120,8 +120,20 @@ export default function ProductosPage() {
 
     if (!user || user.rol !== 'Administrador') {
         return (
-            <div className="p-8 text-center text-red-500">
-                No tienes permisos para ver el inventario.
+            <div className="p-8 text-center flex flex-col items-center justify-center min-h-screen bg-neutral-100">
+                <div className="bg-white p-8 rounded-xl shadow-sm">
+                    <h2 className="text-xl font-bold text-red-500 mb-4">Acceso Denegado</h2>
+                    <p className="text-neutral-600 mb-6">No tienes permisos para ver el inventario o tu sesión ha expirado.</p>
+                    <button
+                        onClick={() => {
+                            useAuthStore.getState().logout();
+                            router.push('/login');
+                        }}
+                        className="px-4 py-2 bg-neutral-800 text-white rounded-lg hover:bg-neutral-900 transition-colors"
+                    >
+                        Cerrar Sesión y Volver a Ingresar
+                    </button>
+                </div>
             </div>
         );
     }

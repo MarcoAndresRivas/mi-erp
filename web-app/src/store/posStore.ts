@@ -54,7 +54,12 @@ const usePosStore = create<PosStore>((set, get) => ({
     fetchProducts: async () => {
         set({ isLoadingProducts: true });
         try {
-            const response = await axios.get(`${API_URL}/productos`);
+            const token = localStorage.getItem('erp_token');
+            const response = await axios.get(`${API_URL}/productos`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
             set({ products: response.data, isLoadingProducts: false });
         } catch (error) {
             console.error('Error fetching API products:', error);
@@ -120,16 +125,36 @@ const usePosStore = create<PosStore>((set, get) => ({
     processPayment: async (method) => {
         set({ isProcessingPayment: true });
 
-        // Aquí iria el llamado al backend real con axios
-        // await axios.post('/api/ventas', { cart: get().cart, method, total: get().total });
+        try {
+            // Asegurarse de enviar el token
+            const token = localStorage.getItem('erp_token');
+            const response = await axios.post(`${API_URL}/ventas`, {
+                cart: get().cart,
+                method,
+                subtotal: get().subtotal,
+                tax: get().tax,
+                total: get().total
+            }, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
 
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                get().clearCart();
-                set({ isProcessingPayment: false });
-                resolve({ success: true, message: 'Pago procesado y boleta generada' });
-            }, 1500); // Simulando tiempo de red
-        });
+            get().clearCart();
+            set({ isProcessingPayment: false });
+
+            // Actualizar stock local si se quiere
+            get().fetchProducts();
+
+            return { success: true, message: 'Pago procesado y boleta generada' };
+        } catch (error: any) {
+            console.error('Error al procesar pago:', error);
+            set({ isProcessingPayment: false });
+            return {
+                success: false,
+                message: error.response?.data?.message || 'Error al conectar procesar la venta'
+            };
+        }
     }
 }));
 

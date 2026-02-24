@@ -7,6 +7,9 @@ import { ActivityIndicator, View } from 'react-native';
 import LoginScreen from '../screens/LoginScreen';
 import DashboardScreen from '../screens/DashboardScreen';
 import OrderDetailsScreen from '../screens/OrderDetailsScreen';
+import VendedorDashboardScreen from '../screens/VendedorDashboardScreen';
+import POSScreen from '../screens/POSScreen';
+import InventoryScreen from '../screens/InventoryScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -27,13 +30,19 @@ export default function AppNavigator() {
 
     return (
         <NavigationContainer>
-            <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Navigator id="app-navigator" screenOptions={{ headerShown: false }}>
                 {!user ? (
                     <Stack.Screen name="Login" component={LoginScreen} />
-                ) : (
+                ) : user.rol === 'Repartidor' ? (
                     <>
                         <Stack.Screen name="Dashboard" component={DashboardScreen} />
                         <Stack.Screen name="OrderDetails" component={OrderDetailsScreen} />
+                    </>
+                ) : (
+                    <>
+                        <Stack.Screen name="VendedorDashboard" component={VendedorDashboardScreen} />
+                        <Stack.Screen name="POS" component={POSScreen} />
+                        <Stack.Screen name="Inventory" component={InventoryScreen} />
                     </>
                 )}
             </Stack.Navigator>
